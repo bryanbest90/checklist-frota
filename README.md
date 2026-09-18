@@ -126,3 +126,22 @@ subiram.
 
 Depois de publicar, vá ao Supabase em **Authentication → URL Configuration** e inclua o
 endereço do Vercel em *Site URL* / *Redirect URLs*.
+
+## No celular do motorista
+
+O app é um site, mas se instala na tela inicial e abre como aplicativo, sem barra de
+navegador. É o `public/manifest.webmanifest` mais as tags do `index.html` que fazem isso.
+
+**Android (Chrome):** abrir o endereço → menu ⋮ → *Adicionar à tela inicial* / *Instalar
+aplicativo*.
+
+**iPhone (Safari):** abrir o endereço → botão compartilhar → *Adicionar à Tela de Início*.
+Precisa ser o Safari; no iPhone o Chrome não instala.
+
+Depois disso aparece o ícone do caminhão junto dos outros apps. A sessão fica salva, então
+o motorista abre e já está logado — quem faz o login uma única vez, na entrega do aparelho,
+é você.
+
+Para trocar o ícone, substitua os PNGs em `public/` (192, 512, o maskable e o
+`apple-touch-icon` de 180). O maskable tem margem maior de propósito: o Android recorta as
+bordas do ícone em círculo em alguns aparelhos.
