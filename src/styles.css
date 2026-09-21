@@ -452,3 +452,19 @@ code{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.92em;backgrou
 .odo:has(.odo-confirma) .odo-ic{background:var(--warn-s);color:var(--warn)}
 .btn-desfazer{color:var(--warn);border-color:var(--warn);background:var(--warn-s)}
 .btn-desfazer:hover{background:var(--warn-s);filter:brightness(.97)}
+
+/* ---------- abas das vistas: grade 3x2 ---------- */
+.vistas{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:14px 0 8px}
+.vistas button{position:relative;overflow:hidden;border:1.5px solid var(--line);background:var(--card);
+  border-radius:11px;padding:9px 10px 12px;cursor:pointer;text-align:left;
+  display:flex;flex-direction:column;gap:3px;min-width:0}
+.vista-nome{font-family:Archivo,sans-serif;font-weight:600;font-size:14px;color:var(--ink);line-height:1.15;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vista-status{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums;
+  font-size:11.5px;color:var(--ink3);line-height:1.2}
+.vista-barra{position:absolute;left:0;right:0;bottom:0;height:4px;background:var(--line)}
+.vista-barra i{display:block;height:100%;background:var(--toque);transition:width .2s ease}
+.vistas button[aria-selected="true"]{border-color:var(--brand);background:var(--brand-s)}
+.vistas button[aria-selected="true"] .vista-nome{color:var(--brand)}
+.vistas button[data-done="1"] .vista-status{color:var(--ok);font-family:Archivo,sans-serif;font-weight:600}
+.vistas button[data-done="1"] .vista-barra i{background:var(--ok)}

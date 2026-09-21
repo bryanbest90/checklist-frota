@@ -236,12 +236,22 @@ export default function Checklist({ perfil, avisar }) {
         </div>
       </div>
 
-      <div className="views" role="tablist" aria-label="Vistas do veículo">
+      <div className="vistas" role="tablist" aria-label="Vistas do veículo">
         {VISTAS.map((v) => {
-          const faltam = PARTES_POR_VISTA[v].filter((k) => !marcacoes[k]).length
+          const total = PARTES_POR_VISTA[v].length
+          const feitos = PARTES_POR_VISTA[v].filter((k) => marcacoes[k]).length
+          const completa = feitos === total
           return (
-            <button key={v} role="tab" aria-selected={vista === v} onClick={() => setVista(v)}>
-              {NOME_VISTA[v]} <span className="ct" data-done={faltam ? '0' : '1'}>{faltam || '✓'}</span>
+            <button
+              key={v}
+              role="tab"
+              aria-selected={vista === v}
+              data-done={completa ? '1' : '0'}
+              onClick={() => setVista(v)}
+            >
+              <span className="vista-nome">{NOME_VISTA[v]}</span>
+              <span className="vista-status">{completa ? '✓ Completa' : `${feitos} de ${total}`}</span>
+              <span className="vista-barra"><i style={{ width: `${(feitos / total) * 100}%` }} /></span>
             </button>
           )
         })}
