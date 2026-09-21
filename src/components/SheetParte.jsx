@@ -77,8 +77,8 @@ export default function SheetParte({ parteId, marcacao, detalhe, aoSalvar, aoLim
             <textarea
               id="obsParte"
               value={obs}
-              onChange={(e) => setObs(e.target.value)}
-              placeholder="Descreva o problema: o que é, onde está, desde quando."
+              onChange={(e) => setObs(e.target.value.toUpperCase())}
+              placeholder="Descreva o problema: o que é e onde está."
             />
             <div className="photo-row">
               <label className="btn btn-sm" htmlFor="fotoParte">

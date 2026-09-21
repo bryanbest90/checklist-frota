@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { PARTES } from '../lib/partes'
+import { rotuloParte } from '../lib/partes'
 import { atualizarOcorrencia, urlAssinada } from '../lib/api'
 import { Pill, quando, nKm, statusDoVeiculo } from './Controle'
 import VisorFoto from './VisorFoto'
@@ -97,7 +97,7 @@ export default function FichaVeiculo({
             <div className="occ" key={o.id} data-sev={o.gravidade}>
               <div className="sv" />
               <div style={{ flex: 1 }}>
-                <b>{PARTES[o.parte]?.l || o.parte}</b>
+                <b>{rotuloParte(o.parte)}</b>
                 <p>{o.observacao || 'Sem descrição'}</p>
                 <div className="mt">
                   <span>{quando(o.criado_em)}</span>
@@ -107,7 +107,7 @@ export default function FichaVeiculo({
               {o.foto_path && (
                 <Foto
                   path={o.foto_path}
-                  legenda={`${PARTES[o.parte]?.l || o.parte} · ${veiculo.placa} · ${quando(o.criado_em)}`}
+                  legenda={`${rotuloParte(o.parte)} · ${veiculo.placa} · ${quando(o.criado_em)}`}
                   aoAmpliar={(url, legenda) => setVisor({ url, legenda })}
                 />
               )}

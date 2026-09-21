@@ -105,9 +105,11 @@ export function comprimirFoto(arquivo, maxLado = 1024, qualidade = 0.7) {
   })
 }
 
-export async function enviarChecklist({ veiculo, motoristaId, km, marcacoes, detalhes }) {
+export async function enviarChecklist({ veiculo, motoristaId, km, marcacoes, detalhes, mecanicas = [], avisoOdometro = null }) {
   const entradas = Object.entries(marcacoes)
-  const problemas = entradas.filter(([, s]) => s !== 'ok')
+  // 'mecanica' sai do fluxo normal: ela vira uma linha por problema descrito,
+  // e não uma linha só com a pior gravidade.
+  const problemas = entradas.filter(([p, s]) => s !== 'ok' && p !== 'mecanica')
 
   const { data: checklist, error } = await supabase
     .from('checklists')
@@ -148,6 +150,44 @@ export async function enviarChecklist({ veiculo, motoristaId, km, marcacoes, det
       gravidade,
       observacao: d.obs || null,
       foto_path,
+    })
+  }
+
+  // Problemas mecânicos: uma linha para cada um, todas com parte = 'mecanica'
+  // e o texto do motorista na observação.
+  for (let i = 0; i < mecanicas.length; i++) {
+    const m = mecanicas[i]
+    let foto_path = null
+
+    if (m.foto) {
+      const caminho = `${veiculo.placa}/${checklist.id}/mecanica-${i + 1}.jpg`
+      const { error: erroFoto } = await supabase.storage
+        .from(BUCKET)
+        .upload(caminho, m.foto, { contentType: 'image/jpeg', upsert: true })
+      if (erroFoto) fotosFalhadas.push('Mecânica')
+      else foto_path = caminho
+    }
+
+    linhas.push({
+      checklist_id: checklist.id,
+      placa: veiculo.placa,
+      parte: 'mecanica',
+      gravidade: m.gravidade,
+      observacao: m.descricao,
+      foto_path,
+    })
+  }
+
+  // Leitura de odômetro fora do esperado, confirmada pelo motorista:
+  // fica registrada para o controle conferir depois.
+  if (avisoOdometro) {
+    linhas.push({
+      checklist_id: checklist.id,
+      placa: veiculo.placa,
+      parte: 'odometro',
+      gravidade: 'atencao',
+      observacao: avisoOdometro,
+      foto_path: null,
     })
   }
 

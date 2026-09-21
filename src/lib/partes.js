@@ -11,6 +11,8 @@ export const PARTES = {
   escapamento: { l: 'Escapamento', v: 'lateral' },
   carroceria: { l: 'Carroceria / caçamba', v: 'lateral' },
   chassi: { l: 'Chassi e molas', v: 'lateral' },
+  pneus_diant: { l: 'Pneus dianteiros', v: 'lateral' },
+  pneus_tras: { l: 'Pneus traseiros', v: 'lateral' },
 
   para_choque_diant: { l: 'Para-choque dianteiro', v: 'frente' },
   para_brisa: { l: 'Para-brisa', v: 'frente' },
@@ -19,9 +21,7 @@ export const PARTES = {
   grade: { l: 'Grade e capô', v: 'frente' },
   limpadores: { l: 'Limpadores e esguicho', v: 'frente' },
   placa_diant: { l: 'Placa dianteira', v: 'frente' },
-  pneus_diant: { l: 'Pneus dianteiros', v: 'frente' },
 
-  pneus_tras: { l: 'Pneus traseiros', v: 'traseira' },
   tampa_tras: { l: 'Tampa / portinhola traseira', v: 'traseira' },
   lanterna_tras: { l: 'Lanternas traseiras', v: 'traseira' },
   luz_re: { l: 'Luz de ré e sinalização', v: 'traseira' },
@@ -36,21 +36,27 @@ export const PARTES = {
   freio_mao: { l: 'Freio de estacionamento', v: 'cabine' },
   buzina: { l: 'Buzina', v: 'cabine' },
 
+  // Mecânica não tem lista: o motorista descreve o que sentiu.
+  // Uma linha por problema, todas gravadas com parte = 'mecanica'.
+  mecanica: { l: 'Mecânica', v: 'mecanica' },
+
   extintor: { l: 'Extintor', v: 'itens' },
   triangulo: { l: 'Triângulo', v: 'itens' },
   macaco: { l: 'Macaco e chave de roda', v: 'itens' },
+  estepe: { l: 'Estepe', v: 'itens' },
   documentos: { l: 'CRLV e documentação', v: 'itens' },
   niveis: { l: 'Níveis (óleo, água, arla)', v: 'itens' },
   luzes: { l: 'Luzes, setas e freio', v: 'itens' },
 }
 
-export const VISTAS = ['lateral', 'frente', 'traseira', 'cabine', 'itens']
+export const VISTAS = ['lateral', 'frente', 'traseira', 'cabine', 'mecanica', 'itens']
 
 export const NOME_VISTA = {
   lateral: 'Lateral',
   frente: 'Frente',
   traseira: 'Traseira',
   cabine: 'Cabine',
+  mecanica: 'Mecânica',
   itens: 'Itens',
 }
 
@@ -59,6 +65,7 @@ export const NOME_VISTA_LONGO = {
   frente: 'Vista frontal',
   traseira: 'Vista traseira',
   cabine: 'Cabine',
+  mecanica: 'Mecânica',
   itens: 'Itens obrigatórios',
 }
 
@@ -69,3 +76,11 @@ export const PARTES_POR_VISTA = VISTAS.reduce((acc, v) => {
 
 export const ITENS_OBRIGATORIOS = PARTES_POR_VISTA.itens
 export const TOTAL_ITENS = Object.keys(PARTES).length
+
+// Rótulos para exibição no controle. Inclui registros que não são itens do
+// checklist — o aviso de odômetro, por exemplo — e por isso ficam fora de PARTES.
+const EXTRAS = { odometro: 'Odômetro' }
+
+export function rotuloParte(id) {
+  return PARTES[id]?.l || EXTRAS[id] || id
+}

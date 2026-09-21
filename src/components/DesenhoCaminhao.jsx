@@ -2,11 +2,11 @@ import { PARTES } from '../lib/partes'
 
 /*
   Uma peça do desenho.
-  Se a vista atual é a dona do item, ela é clicável de verdade (class "part").
-  Se a peça só aparece aqui como contexto — o pneu traseiro visto de lado, por
-  exemplo — ela vira "deco": fica esmaecida, não marca nada, e o toque leva o
-  motorista para a vista onde o item mora. Assim nenhum item é marcável em
-  dois lugares.
+  Se a vista atual é a dona do item, ela é clicável (class "part") e recebe
+  destaque forte. Se a peça só aparece aqui como contexto — o pneu traseiro
+  visto de lado, por exemplo — ela vira "deco": desenho apagado, sem toque
+  nenhum (o CSS corta com pointer-events), para não dar a impressão de que
+  se marca ali. Cada item só é marcável na vista dele.
 */
 function Peca({ id, vista, marcacoes, aoTocar, children }) {
   const dona = PARTES[id].v === vista
@@ -16,7 +16,8 @@ function Peca({ id, vista, marcacoes, aoTocar, children }) {
       className={dona ? 'part' : 'deco'}
       data-part={id}
       data-st={estado || undefined}
-      onClick={() => aoTocar(id, dona)}
+      aria-hidden={dona ? undefined : 'true'}
+      onClick={dona ? () => aoTocar(id) : undefined}
     >
       {children}
     </g>
@@ -38,65 +39,91 @@ export default function DesenhoCaminhao({ vista, marcacoes, aoTocar, placa }) {
   if (vista === 'lateral') {
     return (
       <svg viewBox="0 0 420 210" role="img" aria-label="Vista lateral do caminhão">
-        <line className="ground" x1="12" y1="190" x2="408" y2="190" />
+        <line className="ground" x1="12" y1="192" x2="408" y2="192" />
+
         <Peca id="chassi" {...p}>
-          <rect className="sk" x="40" y="138" width="358" height="13" rx="3" />
+          <rect className="sk" x="40" y="140" width="358" height="12" rx="3" />
         </Peca>
+
         <Peca id="carroceria" {...p}>
-          <rect className="sk" x="158" y="44" width="240" height="96" rx="4" />
-          <path className="det" d="M164 72h228M164 96h228M164 120h228" />
-          <Alerta x={278} y={60} />
+          <rect className="sk" x="170" y="42" width="228" height="98" rx="4" />
+          <path className="det" d="M176 70h216M176 94h216M176 118h216" />
+          <Alerta x={284} y={60} />
         </Peca>
+
         <Peca id="escapamento" {...p}>
-          <rect className="sk" x="140" y="28" width="11" height="112" rx="4" />
+          <rect className="sk" x="154" y="30" width="11" height="110" rx="4" />
         </Peca>
+
+        {/* cabine: cabine-avançada, teto arredondado e frente reta */}
         <Peca id="cabine_lataria" {...p}>
-          <path className="sk" d="M44 142V84l19-32h74v90Z" />
-          <Alerta x={92} y={112} />
+          <path className="sk" d="M44 140V64c0-9 6-16 15-16h93v92Z" />
+          <Alerta x={60} y={124} r={8} />
         </Peca>
+
+        {/* de lado, o para-brisa é só a faixa da frente — ele se marca na vista frontal */}
         <Peca id="para_brisa" {...p}>
-          <path className="gl" d="M68 58h66v24H54Z" />
+          <path className="gl" d="M52 58l15-2-6 36H52Z" />
         </Peca>
+
         <Peca id="retrovisores" {...p}>
-          <rect className="sk" x="52" y="54" width="7" height="24" rx="3" />
-          <path className="det" d="M59 62h7" />
+          <rect className="sk" x="40" y="50" width="7" height="26" rx="3" />
+          <path className="det" d="M47 58h8" />
         </Peca>
+
         <Peca id="porta" {...p}>
-          <rect className="sk" x="80" y="88" width="54" height="50" rx="3" />
-          <path className="det" d="M116 112h11" />
-          <Alerta x={107} y={128} />
+          <rect className="sk" x="72" y="56" width="76" height="84" rx="4" />
+          <path className="det" d="M128 104h12" />
+          <Alerta x={110} y={124} />
         </Peca>
+
         <Peca id="vidro_lateral" {...p}>
-          <rect className="gl" x="86" y="93" width="42" height="21" rx="2" />
-          <Alerta x={107} y={103} r={8} />
+          <rect className="gl" x="80" y="64" width="60" height="36" rx="3" />
+          <Alerta x={110} y={82} />
         </Peca>
+
+        {/* degrau atrás da roda dianteira, embaixo da porta */}
         <Peca id="degrau" {...p}>
-          <rect className="sk" x="86" y="150" width="40" height="9" rx="2" />
+          <rect className="sk" x="120" y="152" width="32" height="9" rx="2" />
+          <path className="det" d="M124 161v6M148 161v6" />
         </Peca>
+
         <Peca id="tanque" {...p}>
-          <rect className="sk" x="152" y="150" width="62" height="26" rx="8" />
+          <rect className="sk" x="168" y="154" width="60" height="26" rx="8" />
         </Peca>
+
+        <Peca id="estepe" {...p}>
+          <circle className="tr" cx="254" cy="164" r="17" />
+          <circle className="det" cx="254" cy="164" r="7" />
+          <path className="det" d="M254 147v-7M254 181v7" />
+        </Peca>
+
         <Peca id="para_choque_diant" {...p}>
-          <rect className="sk" x="30" y="136" width="15" height="22" rx="3" />
+          <rect className="sk" x="30" y="136" width="14" height="22" rx="3" />
         </Peca>
+
         <Peca id="farois" {...p}>
-          <rect className="sk" x="45" y="116" width="15" height="13" rx="3" />
+          <rect className="sk" x="45" y="112" width="14" height="13" rx="3" />
         </Peca>
+
         <Peca id="pneus_diant" {...p}>
-          <circle className="tr" cx="98" cy="166" r="24" />
-          <circle className="det" cx="98" cy="166" r="10" />
-          <Alerta x={98} y={166} />
+          <circle className="tr" cx="92" cy="166" r="26" />
+          <circle className="det" cx="92" cy="166" r="11" />
+          <Alerta x={92} y={166} />
         </Peca>
+
         <Peca id="pneus_tras" {...p}>
-          <circle className="tr" cx="296" cy="166" r="24" />
-          <circle className="det" cx="296" cy="166" r="10" />
-          <circle className="tr" cx="350" cy="166" r="24" />
-          <circle className="det" cx="350" cy="166" r="10" />
-          <Alerta x={323} y={166} />
+          <circle className="tr" cx="300" cy="166" r="26" />
+          <circle className="det" cx="300" cy="166" r="11" />
+          <circle className="tr" cx="354" cy="166" r="26" />
+          <circle className="det" cx="354" cy="166" r="11" />
+          <Alerta x={327} y={166} />
         </Peca>
+
         <Peca id="lanterna_tras" {...p}>
-          <rect className="sk" x="386" y="116" width="13" height="20" rx="3" />
+          <rect className="sk" x="386" y="114" width="13" height="20" rx="3" />
         </Peca>
+
         <Peca id="para_choque_tras" {...p}>
           <rect className="sk" x="380" y="152" width="26" height="12" rx="3" />
         </Peca>
@@ -108,6 +135,15 @@ export default function DesenhoCaminhao({ vista, marcacoes, aoTocar, placa }) {
     return (
       <svg viewBox="0 0 300 220" role="img" aria-label="Vista frontal do caminhão">
         <line className="ground" x1="14" y1="204" x2="286" y2="204" />
+
+        {/* de frente vê-se a banda de rodagem, não a roda inteira */}
+        <Peca id="pneus_diant" {...p}>
+          <rect className="tr" x="42" y="156" width="30" height="48" rx="9" />
+          <path className="det" d="M47 168h20M47 180h20M47 192h20" />
+          <rect className="tr" x="228" y="156" width="30" height="48" rx="9" />
+          <path className="det" d="M233 168h20M233 180h20M233 192h20" />
+        </Peca>
+
         <Peca id="cabine_lataria" {...p}>
           <rect className="sk" x="48" y="26" width="204" height="150" rx="10" />
         </Peca>
@@ -139,20 +175,9 @@ export default function DesenhoCaminhao({ vista, marcacoes, aoTocar, placa }) {
         </Peca>
         <Peca id="placa_diant" {...p}>
           <rect className="sk" x="120" y="146" width="60" height="20" rx="3" />
-          <text
-            x="150"
-            y="160.5"
-            textAnchor="middle"
-            className="mono"
-            style={{ fontSize: 11, fill: 'var(--ink2)' }}
-          >
+          <text x="150" y="160.5" textAnchor="middle" className="mono" style={{ fontSize: 11, fill: 'var(--ink2)' }}>
             {placa}
           </text>
-        </Peca>
-        <Peca id="pneus_diant" {...p}>
-          <circle className="tr" cx="60" cy="186" r="18" />
-          <circle className="tr" cx="240" cy="186" r="18" />
-          <Alerta x={60} y={186} r={8} />
         </Peca>
       </svg>
     )
@@ -162,13 +187,16 @@ export default function DesenhoCaminhao({ vista, marcacoes, aoTocar, placa }) {
     return (
       <svg viewBox="0 0 300 220" role="img" aria-label="Vista traseira do caminhão">
         <line className="ground" x1="14" y1="204" x2="286" y2="204" />
+
+        {/* eixo traseiro: rodagem dupla de cada lado, vista de trás */}
         <Peca id="pneus_tras" {...p}>
-          <circle className="tr" cx="74" cy="184" r="19" />
-          <circle className="det" cx="74" cy="184" r="8" />
-          <circle className="tr" cx="226" cy="184" r="19" />
-          <circle className="det" cx="226" cy="184" r="8" />
-          <Alerta x={74} y={184} />
+          <rect className="tr" x="40" y="158" width="25" height="46" rx="8" />
+          <rect className="tr" x="68" y="158" width="25" height="46" rx="8" />
+          <rect className="tr" x="207" y="158" width="25" height="46" rx="8" />
+          <rect className="tr" x="235" y="158" width="25" height="46" rx="8" />
+          <path className="det" d="M44 172h17M72 172h17M211 172h17M239 172h17M44 188h17M72 188h17M211 188h17M239 188h17" />
         </Peca>
+
         <Peca id="carroceria" {...p}>
           <rect className="sk" x="44" y="18" width="212" height="128" rx="5" />
         </Peca>
@@ -191,18 +219,12 @@ export default function DesenhoCaminhao({ vista, marcacoes, aoTocar, placa }) {
         </Peca>
         <Peca id="placa_tras" {...p}>
           <rect className="sk" x="120" y="152" width="60" height="20" rx="3" />
-          <text
-            x="150"
-            y="166.5"
-            textAnchor="middle"
-            className="mono"
-            style={{ fontSize: 11, fill: 'var(--ink2)' }}
-          >
+          <text x="150" y="166.5" textAnchor="middle" className="mono" style={{ fontSize: 11, fill: 'var(--ink2)' }}>
             {placa}
           </text>
         </Peca>
         <Peca id="protecao_tras" {...p}>
-          <rect className="sk" x="40" y="182" width="220" height="10" rx="4" />
+          <rect className="sk" x="36" y="182" width="228" height="10" rx="4" />
           <path className="det" d="M62 182v-8M238 182v-8" />
         </Peca>
         <Peca id="para_choque_tras" {...p}>

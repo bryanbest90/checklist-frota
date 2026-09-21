@@ -22,6 +22,8 @@ export default function FormVeiculo({ veiculo, motoristas, aoFechar, aoSalvar, a
   const [armado, setArmado] = useState(false)
 
   const set = (k) => (e) => setF({ ...f, [k]: e.target.value })
+  // Texto livre do cadastro também vai em caixa alta, igual ao resto do sistema.
+  const setAlta = (k) => (e) => setF({ ...f, [k]: e.target.value.toUpperCase() })
 
   async function salvar() {
     if (!f.placa.trim() || !f.modelo.trim()) {
@@ -106,7 +108,7 @@ export default function FormVeiculo({ veiculo, motoristas, aoFechar, aoSalvar, a
             </div>
             <div className="field">
               <label htmlFor="modelo">Modelo *</label>
-              <input id="modelo" value={f.modelo} placeholder="VW Constellation 17-230" onChange={set('modelo')} />
+              <input id="modelo" value={f.modelo} placeholder="VW Constellation 17-230" onChange={setAlta('modelo')} />
             </div>
             <div className="field">
               <label htmlFor="tipo">Tipo</label>
@@ -120,11 +122,11 @@ export default function FormVeiculo({ veiculo, motoristas, aoFechar, aoSalvar, a
             </div>
             <div className="field">
               <label htmlFor="chassi">Final do chassi</label>
-              <input id="chassi" value={f.chassi} placeholder="…9K2841" onChange={set('chassi')} />
+              <input id="chassi" value={f.chassi} placeholder="…9K2841" onChange={setAlta('chassi')} />
             </div>
             <div className="field">
               <label htmlFor="equipe">Equipe</label>
-              <input id="equipe" value={f.equipe} placeholder="Equipe 04" onChange={set('equipe')} />
+              <input id="equipe" value={f.equipe} placeholder="Equipe 04" onChange={setAlta('equipe')} />
             </div>
             <div className="field">
               <label htmlFor="motorista">Motorista</label>

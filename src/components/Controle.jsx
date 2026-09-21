@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { PARTES } from '../lib/partes'
+import { rotuloParte } from '../lib/partes'
 import { listarVeiculos, listarOcorrencias, listarChecklists, listarPerfis } from '../lib/api'
 import FichaVeiculo from './FichaVeiculo'
 import FormVeiculo from './FormVeiculo'
@@ -200,7 +200,7 @@ export default function Controle({ avisar }) {
               {porParte.length === 0 && <p className="empty">Nenhuma ocorrência registrada.</p>}
               {porParte.map(([parte, n]) => (
                 <div className="bar-row" key={parte}>
-                  <span className="lb">{PARTES[parte]?.l || parte}</span>
+                  <span className="lb">{rotuloParte(parte)}</span>
                   <span className="vl">{n}</span>
                   <div className="tk">
                     <i style={{ width: `${Math.max(8, (n / maiorParte) * 100)}%` }} />
@@ -218,7 +218,7 @@ export default function Controle({ avisar }) {
               <div className="occ" key={o.id} data-sev={o.gravidade}>
                 <div className="sv" />
                 <div>
-                  <b>{PARTES[o.parte]?.l || o.parte}</b>
+                  <b>{rotuloParte(o.parte)}</b>
                   <p>{o.observacao || 'Sem descrição'}</p>
                   <div className="mt">
                     <span>{o.placa}</span>
