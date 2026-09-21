@@ -450,3 +450,5 @@ code{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.92em;backgrou
 .odo[data-ok="0"]{border-color:var(--toque)}
 .odo:has(.odo-confirma){border-color:var(--warn)}
 .odo:has(.odo-confirma) .odo-ic{background:var(--warn-s);color:var(--warn)}
+.btn-desfazer{color:var(--warn);border-color:var(--warn);background:var(--warn-s)}
+.btn-desfazer:hover{background:var(--warn-s);filter:brightness(.97)}

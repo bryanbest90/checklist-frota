@@ -19,6 +19,7 @@ export default function Checklist({ perfil, avisar }) {
   const [sheetMec, setSheetMec] = useState(false)
   const [km, setKm] = useState('')
   const [kmConfirmado, setKmConfirmado] = useState(false)
+  const [ultimoLote, setUltimoLote] = useState([])  // o que o "Restantes OK" marcou
   const [enviando, setEnviando] = useState(false)
   const [erro, setErro] = useState('')
 
@@ -96,11 +97,27 @@ export default function Checklist({ perfil, avisar }) {
   }
 
   function marcarRestantes() {
+    const lote = Object.keys(PARTES).filter((k) => !marcacoes[k])
+    if (!lote.length) return
     setMarcacoes((m) => {
       const n = { ...m }
-      Object.keys(PARTES).forEach((k) => { if (!n[k]) n[k] = 'ok' })
+      lote.forEach((k) => { n[k] = 'ok' })
       return n
     })
+    setUltimoLote(lote)
+  }
+
+  // Desfaz só o que aquele toque marcou, e só o que continua como conforme.
+  // Se o motorista mexeu em algum item depois, aquele fica como está —
+  // desmarcar um problema já descrito jogaria fora texto e foto.
+  function desfazerLote() {
+    setMarcacoes((m) => {
+      const n = { ...m }
+      ultimoLote.forEach((k) => { if (n[k] === 'ok') delete n[k] })
+      return n
+    })
+    avisar(`${ultimoLote.length} itens voltaram a ficar sem verificação.`)
+    setUltimoLote([])
   }
 
   async function finalizar() {
@@ -126,6 +143,7 @@ export default function Checklist({ perfil, avisar }) {
       setMecanicas([])
       setKm('')
       setKmConfirmado(false)
+      setUltimoLote([])
       if (fotosFalhadas.length) {
         avisar(`Checklist enviado. Não subiram as fotos de: ${fotosFalhadas.join(', ')}.`)
       } else {
@@ -358,7 +376,18 @@ export default function Checklist({ perfil, avisar }) {
       {erro && <p className="form-err" style={{ marginTop: 14 }}>{erro}</p>}
 
       <div className="acoes">
-        <button className="btn" onClick={marcarRestantes}>Restantes OK</button>
+        {ultimoLote.length > 0 ? (
+          <button className="btn btn-desfazer" onClick={desfazerLote}>
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor"
+                 strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 8h11a5 5 0 0 1 0 10h-3" />
+              <path d="M7 4 3 8l4 4" />
+            </svg>
+            Desfazer {ultimoLote.length}
+          </button>
+        ) : (
+          <button className="btn" onClick={marcarRestantes}>Restantes OK</button>
+        )}
         <button className="btn btn-primary" disabled={!completo || !kmPreenchido || (kmSuspeito && !kmConfirmado) || enviando} onClick={finalizar}>
           {enviando
             ? 'Enviando…'
